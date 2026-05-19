@@ -52,7 +52,11 @@ Page({
         .limit(20)
         .get();
 
-      const records = res.data;
+      const records = res.data.map(r => ({
+        ...r,
+        _translateX: 0,
+        _hasTransition: false,
+      }));
       const totalExpense = records
         .filter(r => r.type === 'expense')
         .reduce((sum, r) => sum + r.amount, 0);
@@ -79,25 +83,81 @@ Page({
     // TODO: 实现分页加载
   },
 
-  // 左滑删除 - 触摸开始
+  // 左滑 - 触摸开始
   onTouchStart(e) {
+    const id = e.currentTarget.dataset.id;
+    const index = e.currentTarget.dataset.index;
+
     this._touchStartX = e.touches[0].clientX;
     this._touchStartY = e.touches[0].clientY;
+    this._swipeItemId = id;
+    this._swipeItemIndex = index;
+    this._swiping = false;
+
+    // 如果另一条记录已打开，先关闭它
+    if (this.data.swipedId && this.data.swipedId !== id) {
+      const openIndex = this.data.recordList.findIndex(r => r._id === this.data.swipedId);
+      if (openIndex >= 0) {
+        this.setData({
+          [`recordList[${openIndex}]._translateX`]: 0,
+          [`recordList[${openIndex}]._hasTransition`]: true,
+          swipedId: '',
+        });
+      }
+    }
   },
 
-  // 左滑删除 - 触摸结束
-  onTouchEnd(e) {
-    const deltaX = e.changedTouches[0].clientX - this._touchStartX;
-    const deltaY = e.changedTouches[0].clientY - this._touchStartY;
-    const id = e.currentTarget.dataset.id;
+  // 左滑 - 触摸移动（跟手）
+  onTouchMove(e) {
+    if (this._swipeItemIndex === undefined) return;
 
-    // 仅处理水平滑动（忽略垂直滚动）
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
-      if (deltaX < 0) {
-        this.setData({ swipedId: id });
+    const deltaX = e.touches[0].clientX - this._touchStartX;
+    const deltaY = e.touches[0].clientY - this._touchStartY;
+
+    if (!this._swiping) {
+      if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        this._swiping = true;
+      } else if (Math.abs(deltaY) > 10) {
+        this._swipeItemIndex = undefined;
+        return;
       } else {
-        this.setData({ swipedId: '' });
+        return;
       }
+    }
+
+    const offset = Math.max(-280, Math.min(0, deltaX));
+    this.setData({
+      [`recordList[${this._swipeItemIndex}]._translateX`]: offset,
+    });
+  },
+
+  // 左滑 - 触摸结束（自动吸边）
+  onTouchEnd(e) {
+    if (!this._swiping || this._swipeItemIndex === undefined) {
+      this._swipeItemIndex = undefined;
+      this._swiping = false;
+      return;
+    }
+
+    const id = this._swipeItemId;
+    const index = this._swipeItemIndex;
+    const currentOffset = this.data.recordList[index]._translateX;
+
+    this._swipeItemIndex = undefined;
+    this._swiping = false;
+
+    if (currentOffset < -140) {
+      this.setData({
+        [`recordList[${index}]._translateX`]: -280,
+        [`recordList[${index}]._hasTransition`]: true,
+        swipedId: id,
+      });
+    } else {
+      this.setData({
+        [`recordList[${index}]._translateX`]: 0,
+        [`recordList[${index}]._hasTransition`]: true,
+        swipedId: '',
+      });
     }
   },
 
@@ -106,9 +166,25 @@ Page({
     if (this.data.swipedId) {
       const id = e.currentTarget.dataset.id;
       if (id !== this.data.swipedId) {
-        this.setData({ swipedId: '' });
+        const openIndex = this.data.recordList.findIndex(r => r._id === this.data.swipedId);
+        if (openIndex >= 0) {
+          this.setData({
+            [`recordList[${openIndex}]._translateX`]: 0,
+            [`recordList[${openIndex}]._hasTransition`]: true,
+            swipedId: '',
+          });
+        }
       }
     }
+  },
+
+  // 编辑账单记录
+  onEditRecord(e) {
+    const id = e.currentTarget.dataset.id;
+    this.setData({ swipedId: '' });
+    wx.navigateTo({
+      url: `/pages/add-record/add-record?id=${id}`,
+    });
   },
 
   // 删除账单记录

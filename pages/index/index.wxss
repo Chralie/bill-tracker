@@ -49,22 +49,33 @@
   margin-bottom: 2rpx;
 }
 
-/* 删除按钮 - 藏在记录后方 */
-.record-delete {
+/* 操作按钮组 - 藏在记录后方 */
+.record-actions {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 160rpx;
-  background-color: #e74c3c;
-  color: #ffffff;
-  font-size: 28rpx;
+  display: flex;
+}
+
+.record-action {
+  width: 140rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #ffffff;
+  font-size: 28rpx;
 }
 
-/* 记录内容 - 覆盖在删除按钮上方 */
+.record-action.edit {
+  background-color: #ffa940;
+}
+
+.record-action.delete {
+  background-color: #e74c3c;
+}
+
+/* 记录内容 - 覆盖在操作按钮上方 */
 .record-content {
   position: relative;
   display: flex;
@@ -72,13 +83,8 @@
   justify-content: space-between;
   padding: 24rpx 20rpx;
   background-color: #ffffff;
-  transition: transform 0.25s ease;
   border-radius: 0;
   margin-bottom: 0;
-}
-
-.record-content.swiped {
-  transform: translateX(-160rpx);
 }
 
 .record-left {

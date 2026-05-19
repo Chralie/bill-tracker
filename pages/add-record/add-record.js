@@ -38,6 +38,12 @@ Page({
 
       if (res.data.length > 0) {
         this.setData({ categories: res.data });
+        // 编辑模式下匹配选中分类
+        if (this._pendingCategoryId) {
+          const catIndex = res.data.findIndex(c => c._id === this._pendingCategoryId);
+          if (catIndex >= 0) this.setData({ categoryIndex: catIndex });
+          this._pendingCategoryId = null;
+        }
       } else {
         // 首次使用，初始化预设分类
         this.initPresetCategories();
@@ -77,7 +83,21 @@ Page({
 
   // 加载待编辑的记录
   async loadRecord(id) {
-    // TODO
+    try {
+      const res = await db.collection('billing_records').doc(id).get();
+      const record = res.data;
+      this.setData({
+        amount: (record.amount / 100).toString(),
+        type: record.type,
+        recordDate: record.record_date,
+        note: record.note || '',
+      });
+      // 等分类加载完成后匹配选中项
+      this._pendingCategoryId = record.category_id;
+    } catch (err) {
+      console.error('加载记录失败:', err);
+      wx.showToast({ title: '加载失败', icon: 'none' });
+    }
   },
 
   // 金额输入
@@ -129,21 +149,28 @@ Page({
 
     this.setData({ submitting: true });
 
-    try {
-      await db.collection('billing_records').add({
-        data: {
-          amount: util.yuanToCents(amountNum),
-          type,
-          category_id: selectedCategory._id,
-          category_name: selectedCategory.name,
-          record_date: recordDate,
-          note: note.trim() || '',
-          create_time: new Date(),
-        },
-      });
+    const recordData = {
+      amount: util.yuanToCents(amountNum),
+      type,
+      category_id: selectedCategory._id,
+      category_name: selectedCategory.name,
+      record_date: recordDate,
+      note: note.trim() || '',
+    };
 
-      wx.showToast({ title: '记账成功', icon: 'success' });
-      // 跳转到首页
+    try {
+      if (this.data.isEdit) {
+        await db.collection('billing_records').doc(this.data.editId).update({
+          data: recordData,
+        });
+        wx.showToast({ title: '修改成功', icon: 'success' });
+      } else {
+        await db.collection('billing_records').add({
+          data: { ...recordData, create_time: new Date() },
+        });
+        wx.showToast({ title: '记账成功', icon: 'success' });
+      }
+
       setTimeout(() => {
         wx.redirectTo({ url: '/pages/index/index' });
       }, 1000);
