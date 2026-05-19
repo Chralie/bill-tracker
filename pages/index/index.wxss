@@ -75,16 +75,17 @@
   background-color: #e74c3c;
 }
 
-/* 记录内容 - 覆盖在操作按钮上方 */
+/* 记录内容 - 覆盖在操作按钮上方（margin 必须为 0，否则按钮会从间隙露出） */
 .record-content {
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 24rpx 20rpx;
   background-color: #ffffff;
   border-radius: 0;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .record-left {

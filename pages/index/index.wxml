@@ -3,9 +3,11 @@
 
   <!-- 月度统计卡片 -->
   <view class="card stats-card">
-    <view class="stats-header flex-between">
-      <text class="stats-month">{{currentMonth}}</text>
-    </view>
+    <picker mode="date" fields="month" value="{{currentMonth}}" bindchange="onMonthChange">
+      <view class="stats-header flex-between">
+        <text class="stats-month">{{currentMonth}}  ▼</text>
+      </view>
+    </picker>
     <view class="stats-body flex-between">
       <view class="stats-item">
         <text class="stats-label">支出</text>
