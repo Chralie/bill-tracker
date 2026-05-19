@@ -105,4 +105,11 @@ Page({
       wx.showToast({ title: '删除失败', icon: 'none' });
     }
   },
+
+  // 底部导航
+  onNavTap(e) {
+    const page = e.currentTarget.dataset.page;
+    if (page === 'category-manage') return;
+    wx.redirectTo({ url: `/pages/${page}/${page}` });
+  },
 });

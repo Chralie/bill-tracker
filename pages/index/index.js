@@ -92,4 +92,11 @@ Page({
       this.loadRecords();
     });
   },
+
+  // 底部导航
+  onNavTap(e) {
+    const page = e.currentTarget.dataset.page;
+    if (page === 'index') return;
+    wx.redirectTo({ url: `/pages/${page}/${page}` });
+  },
 });

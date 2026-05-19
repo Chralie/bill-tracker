@@ -10,32 +10,6 @@
     "navigationBarTextStyle": "black",
     "backgroundColor": "#f5f5f5"
   },
-  "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#07c160",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "black",
-    "list": [
-      {
-        "pagePath": "pages/index/index",
-        "text": "账单",
-        "iconPath": "images/tab-bill.png",
-        "selectedIconPath": "images/tab-bill-active.png"
-      },
-      {
-        "pagePath": "pages/add-record/add-record",
-        "text": "记一笔",
-        "iconPath": "images/tab-add.png",
-        "selectedIconPath": "images/tab-add-active.png"
-      },
-      {
-        "pagePath": "pages/category-manage/category-manage",
-        "text": "分类",
-        "iconPath": "images/tab-category.png",
-        "selectedIconPath": "images/tab-category-active.png"
-      }
-    ]
-  },
   "sitemapLocation": "sitemap.json",
   "style": "v2"
 }

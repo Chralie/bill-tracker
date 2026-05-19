@@ -143,9 +143,9 @@ Page({
       });
 
       wx.showToast({ title: '记账成功', icon: 'success' });
-      // 延迟返回，让用户看到成功提示
+      // 跳转到首页
       setTimeout(() => {
-        wx.navigateBack();
+        wx.redirectTo({ url: '/pages/index/index' });
       }, 1000);
     } catch (err) {
       console.error('保存失败:', err);
@@ -158,5 +158,12 @@ Page({
   // 获取当前类型的分类
   getCategoriesByType() {
     return this.data.categories.filter(cat => cat.type === this.data.type);
+  },
+
+  // 底部导航
+  onNavTap(e) {
+    const page = e.currentTarget.dataset.page;
+    if (page === 'add-record') return;
+    wx.redirectTo({ url: `/pages/${page}/${page}` });
   },
 });
