@@ -1,0 +1,93 @@
+/* pages/index/index.wxss */
+
+.container {
+  padding-bottom: 40rpx;
+}
+
+/* 统计卡片 */
+.stats-card {
+  background: linear-gradient(135deg, #07c160, #06ad56);
+  color: #ffffff;
+  padding: 32rpx;
+}
+
+.stats-card .stats-month {
+  font-size: 28rpx;
+  opacity: 0.8;
+  margin-bottom: 16rpx;
+}
+
+.stats-body {
+  margin-top: 16rpx;
+}
+
+.stats-item {
+  text-align: center;
+}
+
+.stats-label {
+  display: block;
+  font-size: 24rpx;
+  opacity: 0.8;
+  margin-bottom: 8rpx;
+}
+
+.stats-amount {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+/* 账单列表 */
+.record-list {
+  margin-top: 20rpx;
+}
+
+.record-item {
+  margin-bottom: 2rpx;
+  border-radius: 0;
+}
+
+.record-left {
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.record-category {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.record-note {
+  font-size: 24rpx;
+}
+
+.record-right {
+  text-align: right;
+}
+
+.record-amount {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.record-date {
+  display: block;
+  font-size: 22rpx;
+  margin-top: 4rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  height: 400rpx;
+  white-space: pre-line;
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* 加载提示 */
+.loading-tip {
+  padding: 20rpx 0;
+  font-size: 24rpx;
+}

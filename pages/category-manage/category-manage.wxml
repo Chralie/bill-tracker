@@ -1,0 +1,79 @@
+<!-- pages/category-manage/category-manage.wxml - 分类管理 -->
+<view class="container">
+
+  <!-- 支出分类 -->
+  <view class="section">
+    <view class="section-header flex-between">
+      <text class="section-title">支出分类</text>
+      <text class="add-btn" data-type="expense" bindtap="showAdd">+ 添加</text>
+    </view>
+    <view class="category-list card">
+      <view
+        wx:for="{{expenseCategories}}"
+        wx:key="_id"
+        class="category-row flex-between"
+      >
+        <view class="flex">
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-name">{{item.name}}</text>
+        </view>
+        <text
+          wx:if="{{!item.is_preset}}"
+          class="delete-btn text-danger"
+          data-id="{{item._id}}"
+          data-name="{{item.name}}"
+          bindtap="deleteCategory"
+        >删除</text>
+        <text wx:else class="text-muted" style="font-size: 22rpx;">预设</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收入分类 -->
+  <view class="section">
+    <view class="section-header flex-between">
+      <text class="section-title">收入分类</text>
+      <text class="add-btn" data-type="income" bindtap="showAdd">+ 添加</text>
+    </view>
+    <view class="category-list card">
+      <view
+        wx:for="{{incomeCategories}}"
+        wx:key="_id"
+        class="category-row flex-between"
+      >
+        <view class="flex">
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-name">{{item.name}}</text>
+        </view>
+        <text
+          wx:if="{{!item.is_preset}}"
+          class="delete-btn text-danger"
+          data-id="{{item._id}}"
+          data-name="{{item.name}}"
+          bindtap="deleteCategory"
+        >删除</text>
+        <text wx:else class="text-muted" style="font-size: 22rpx;">预设</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加分类弹窗 -->
+  <view wx:if="{{showAddDialog}}" class="dialog-mask" bindtap="hideAdd">
+    <view class="dialog" catchtap>
+      <view class="dialog-title">添加{{addType === 'expense' ? '支出' : '收入'}}分类</view>
+      <input
+        class="dialog-input"
+        placeholder="输入分类名称"
+        value="{{newCategoryName}}"
+        bindinput="onNameInput"
+        maxlength="10"
+        focus="{{true}}"
+      />
+      <view class="dialog-actions flex">
+        <view class="dialog-btn cancel" bindtap="hideAdd">取消</view>
+        <view class="dialog-btn confirm" bindtap="addCategory">确定</view>
+      </view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,55 @@
+<!-- pages/index/index.wxml - 首页 -->
+<view class="container">
+
+  <!-- 月度统计卡片 -->
+  <view class="card stats-card">
+    <view class="stats-header flex-between">
+      <text class="stats-month">{{currentMonth}}</text>
+    </view>
+    <view class="stats-body flex-between">
+      <view class="stats-item">
+        <text class="stats-label">支出</text>
+        <text class="stats-amount text-danger">-¥{{totalExpense / 100}}</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-label">收入</text>
+        <text class="stats-amount text-primary">+¥{{totalIncome / 100}}</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-label">结余</text>
+        <text class="stats-amount">¥{{(totalIncome - totalExpense) / 100}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账单列表 -->
+  <view wx:if="{{recordList.length > 0}}" class="record-list">
+    <view
+      wx:for="{{recordList}}"
+      wx:key="_id"
+      class="card record-item flex-between"
+    >
+      <view class="record-left flex">
+        <text class="record-category">{{item.category_name || '其他'}}</text>
+        <text class="record-note text-muted">{{item.note}}</text>
+      </view>
+      <view class="record-right">
+        <text class="record-amount {{item.type === 'expense' ? 'text-danger' : 'text-primary'}}">
+          {{item.type === 'expense' ? '-' : '+'}}¥{{item.amount / 100}}
+        </text>
+        <text class="record-date text-muted">{{item.record_date}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state flex-center">
+    <text class="text-muted">还没有账单记录\n点击下方"记一笔"开始记账吧</text>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{loading}}" class="loading-tip text-center text-muted">
+    加载中...
+  </view>
+
+</view>
