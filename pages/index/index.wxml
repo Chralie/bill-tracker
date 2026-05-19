@@ -27,17 +27,32 @@
     <view
       wx:for="{{recordList}}"
       wx:key="_id"
-      class="card record-item flex-between"
+      class="record-item-wrapper"
     >
-      <view class="record-left flex">
-        <text class="record-category">{{item.category_name || '其他'}}</text>
-        <text class="record-note text-muted">{{item.note}}</text>
-      </view>
-      <view class="record-right">
-        <text class="record-amount {{item.type === 'expense' ? 'text-danger' : 'text-primary'}}">
-          {{item.type === 'expense' ? '-' : '+'}}¥{{item.amount / 100}}
-        </text>
-        <text class="record-date text-muted">{{item.record_date}}</text>
+      <!-- 删除按钮（藏在后方） -->
+      <view
+        class="record-delete"
+        bindtap="onDeleteRecord"
+        data-id="{{item._id}}"
+      >删除</view>
+      <!-- 记录内容（可左滑） -->
+      <view
+        class="record-content card {{swipedId === item._id ? 'swiped' : ''}}"
+        bindtouchstart="onTouchStart"
+        bindtouchend="onTouchEnd"
+        bindtap="onRecordTap"
+        data-id="{{item._id}}"
+      >
+        <view class="record-left flex">
+          <text class="record-category">{{item.category_name || '其他'}}</text>
+          <text class="record-note text-muted">{{item.note}}</text>
+        </view>
+        <view class="record-right">
+          <text class="record-amount {{item.type === 'expense' ? 'text-danger' : 'text-primary'}}">
+            {{item.type === 'expense' ? '-' : '+'}}¥{{item.amount / 100}}
+          </text>
+          <text class="record-date text-muted">{{item.record_date}}</text>
+        </view>
       </view>
     </view>
   </view>

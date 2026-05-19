@@ -10,6 +10,7 @@ Page({
     recordList: [],     // 账单列表
     loading: false,
     hasMore: true,      // 是否还有更多数据
+    swipedId: '',       // 当前左滑打开的记录 _id
   },
 
   onLoad() {
@@ -76,6 +77,60 @@ Page({
   // 加载更多（滚动到底部）
   async loadMoreRecords() {
     // TODO: 实现分页加载
+  },
+
+  // 左滑删除 - 触摸开始
+  onTouchStart(e) {
+    this._touchStartX = e.touches[0].clientX;
+    this._touchStartY = e.touches[0].clientY;
+  },
+
+  // 左滑删除 - 触摸结束
+  onTouchEnd(e) {
+    const deltaX = e.changedTouches[0].clientX - this._touchStartX;
+    const deltaY = e.changedTouches[0].clientY - this._touchStartY;
+    const id = e.currentTarget.dataset.id;
+
+    // 仅处理水平滑动（忽略垂直滚动）
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+      if (deltaX < 0) {
+        this.setData({ swipedId: id });
+      } else {
+        this.setData({ swipedId: '' });
+      }
+    }
+  },
+
+  // 点击记录项 - 关闭已打开的滑动
+  onRecordTap(e) {
+    if (this.data.swipedId) {
+      const id = e.currentTarget.dataset.id;
+      if (id !== this.data.swipedId) {
+        this.setData({ swipedId: '' });
+      }
+    }
+  },
+
+  // 删除账单记录
+  async onDeleteRecord(e) {
+    const id = e.currentTarget.dataset.id;
+
+    const confirm = await wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条记录吗？',
+    });
+
+    if (!confirm.confirm) return;
+
+    try {
+      await db.collection('billing_records').doc(id).remove();
+      wx.showToast({ title: '已删除', icon: 'success' });
+      this.setData({ swipedId: '' });
+      this.loadRecords();
+    } catch (err) {
+      console.error('删除记录失败:', err);
+      wx.showToast({ title: '删除失败', icon: 'none' });
+    }
   },
 
   // 跳转到记一笔页面

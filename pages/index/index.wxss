@@ -43,9 +43,42 @@
   margin-top: 20rpx;
 }
 
-.record-item {
+.record-item-wrapper {
+  position: relative;
+  overflow: hidden;
   margin-bottom: 2rpx;
+}
+
+/* 删除按钮 - 藏在记录后方 */
+.record-delete {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 160rpx;
+  background-color: #e74c3c;
+  color: #ffffff;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 记录内容 - 覆盖在删除按钮上方 */
+.record-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 20rpx;
+  background-color: #ffffff;
+  transition: transform 0.25s ease;
   border-radius: 0;
+  margin-bottom: 0;
+}
+
+.record-content.swiped {
+  transform: translateX(-160rpx);
 }
 
 .record-left {
