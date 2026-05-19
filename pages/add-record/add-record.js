@@ -10,6 +10,7 @@ Page({
     categoryIndex: 0,     // 分类选中索引
     categories: [],       // 分类列表
     recordDate: util.getToday(),
+    recordTime: util.getCurrentTime(),
     note: '',
 
     // 编辑模式
@@ -89,7 +90,8 @@ Page({
       this.setData({
         amount: (record.amount / 100).toString(),
         type: record.type,
-        recordDate: record.record_date,
+        recordDate: record.record_date.split(' ')[0],
+        recordTime: record.record_date.split(' ')[1] || '00:00',
         note: record.note || '',
       });
       // 等分类加载完成后匹配选中项
@@ -128,9 +130,14 @@ Page({
     this.setData({ recordDate: e.detail.value });
   },
 
+  // 选择时间
+  onTimeChange(e) {
+    this.setData({ recordTime: e.detail.value });
+  },
+
   // 提交
   async onSubmit() {
-    const { amount, type, categories, categoryIndex, recordDate, note, submitting } = this.data;
+    const { amount, type, categories, categoryIndex, recordDate, recordTime, note, submitting } = this.data;
 
     if (submitting) return;
 
@@ -154,7 +161,7 @@ Page({
       type,
       category_id: selectedCategory._id,
       category_name: selectedCategory.name,
-      record_date: recordDate,
+      record_date: `${recordDate} ${recordTime}`,
       note: note.trim() || '',
     };
 

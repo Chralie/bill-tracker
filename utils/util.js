@@ -46,10 +46,20 @@ function getCurrentMonth() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
+/**
+ * 获取当前时间 HH:mm
+ * @returns {string}
+ */
+function getCurrentTime() {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
 module.exports = {
   formatAmount,
   yuanToCents,
   formatDate,
   getToday,
   getCurrentMonth,
+  getCurrentTime,
 };

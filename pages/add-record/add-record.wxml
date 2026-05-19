@@ -48,12 +48,17 @@
     </view>
   </view>
 
-  <!-- 日期选择 -->
+  <!-- 日期 & 时间选择 -->
   <view class="card date-card flex-between">
     <text class="section-title">日期</text>
-    <picker mode="date" value="{{recordDate}}" bindchange="onDateChange">
-      <text class="date-value">{{recordDate}}</text>
-    </picker>
+    <view class="datetime-row flex">
+      <picker mode="date" value="{{recordDate}}" bindchange="onDateChange">
+        <text class="date-value">{{recordDate}}</text>
+      </picker>
+      <picker mode="time" value="{{recordTime}}" bindchange="onTimeChange">
+        <text class="date-value time-value">{{recordTime}}</text>
+      </picker>
+    </view>
   </view>
 
   <!-- 备注 -->

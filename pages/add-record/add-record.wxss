@@ -101,8 +101,17 @@
   margin-top: 20rpx;
 }
 
+.datetime-row {
+  gap: 24rpx;
+}
+
 .date-value {
   color: #07c160;
+}
+
+.time-value {
+  padding-left: 24rpx;
+  border-left: 2rpx solid #e5e5e5;
 }
 
 .note-input {
