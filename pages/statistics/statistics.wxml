@@ -104,13 +104,15 @@
       <view class="section" wx:if="{{periodType === 'year'}}">
         <view class="section-title">每月支出趋势</view>
         <view class="card">
-          <view class="bar-chart">
-            <view class="bar-col" wx:for="{{dailyTotals}}" wx:key="label">
-              <view class="bar-col-fill bar-color-0" style="height: {{item.barPercent}}%"></view>
-              <text class="bar-col-value">¥{{item.expense / 100}}</text>
-              <text class="bar-col-label">{{item.label}}</text>
+          <scroll-view scroll-x class="bar-chart-scroll">
+            <view class="bar-chart bar-chart-year">
+              <view class="bar-col" wx:for="{{dailyTotals}}" wx:key="label">
+                <view class="bar-col-fill bar-color-0" style="height: {{item.barPercent}}%"></view>
+                <text class="bar-col-value">¥{{item.expense / 100}}</text>
+                <text class="bar-col-label">{{item.label}}</text>
+              </view>
             </view>
-          </view>
+          </scroll-view>
         </view>
       </view>
 

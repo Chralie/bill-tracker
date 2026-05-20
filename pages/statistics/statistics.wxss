@@ -308,12 +308,18 @@
 }
 
 /* ===== 柱状图 ===== */
+.bar-chart-scroll {
+  width: 100%;
+}
 .bar-chart {
   display: flex;
   align-items: flex-end;
   justify-content: space-around;
   height: 360rpx;
   padding: 20rpx 0 0;
+}
+.bar-chart-year {
+  min-width: 960rpx;
 }
 .bar-col {
   flex: 1;
