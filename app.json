@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/statistics/statistics",
     "pages/add-record/add-record",
     "pages/category-manage/category-manage"
   ],

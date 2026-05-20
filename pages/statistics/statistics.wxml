@@ -1,0 +1,186 @@
+<!-- 统计分析页面 -->
+<view class="container">
+
+  <!-- 加载状态 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view class="error-wrap" wx:elif="{{error}}">
+    <text class="error-icon">⚠️</text>
+    <text class="error-text">{{errorMsg}}</text>
+  </view>
+
+  <!-- 数据内容 -->
+  <block wx:else>
+
+    <!-- 周期类型切换 -->
+    <view class="period-type-tabs">
+      <view
+        class="type-tab {{periodType === 'week' ? 'active' : ''}}"
+        bindtap="onPeriodTypeChange"
+        data-type="week"
+      >周</view>
+      <view
+        class="type-tab {{periodType === 'month' ? 'active' : ''}}"
+        bindtap="onPeriodTypeChange"
+        data-type="month"
+      >月</view>
+      <view
+        class="type-tab {{periodType === 'year' ? 'active' : ''}}"
+        bindtap="onPeriodTypeChange"
+        data-type="year"
+      >年</view>
+    </view>
+
+    <!-- 周期选择器 -->
+    <view class="period-selector">
+      <view class="period-arrow" bindtap="onPrevPeriod">◀</view>
+      <text class="period-label">{{periodLabel}}</text>
+      <view class="period-arrow {{canGoNext ? '' : 'disabled'}}" bindtap="onNextPeriod">▶</view>
+    </view>
+
+    <view class="date-range-text">{{dateRangeText}}</view>
+
+    <!-- 空状态 -->
+    <view class="empty-wrap" wx:if="{{recordCount === 0}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无账单记录</text>
+    </view>
+
+    <block wx:else>
+      <!-- 汇总卡片 -->
+      <view class="summary-card">
+        <view class="summary-row">
+          <view class="summary-item">
+            <text class="summary-label">支出</text>
+            <text class="summary-value">¥{{totalExpense / 100}}</text>
+          </view>
+          <view class="summary-item">
+            <text class="summary-label">收入</text>
+            <text class="summary-value">¥{{totalIncome / 100}}</text>
+          </view>
+        </view>
+        <view class="summary-row summary-row-secondary">
+          <view class="summary-item">
+            <text class="summary-label">结余</text>
+            <text class="summary-value">¥{{balance / 100}}</text>
+          </view>
+          <view class="summary-item">
+            <text class="summary-label">日均支出</text>
+            <text class="summary-value">¥{{avgDailyExpense / 100}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 支出分类分布 -->
+      <view class="section" wx:if="{{expenseCategories.length > 0}}">
+        <view class="section-title">支出分类分布</view>
+        <view class="card">
+          <view class="category-row" wx:for="{{expenseCategories}}" wx:key="name">
+            <text class="category-icon">{{item.icon}}</text>
+            <text class="category-name">{{item.name}}</text>
+            <view class="bar-track">
+              <view class="bar-fill bar-color-{{item.colorIndex}}" style="width: {{item.percent}}%"></view>
+            </view>
+            <view class="category-right">
+              <text class="category-amount">¥{{item.total / 100}}</text>
+              <text class="category-percent">{{item.percent}}%</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section" wx:elif="{{totalExpense > 0 && expenseCategories.length === 0}}">
+        <view class="section-title">支出分类分布</view>
+        <view class="card empty-section">暂无支出分类数据</view>
+      </view>
+
+      <!-- 每日/每月支出趋势 -->
+      <view class="section">
+        <view class="section-title">
+          {{periodType === 'year' ? '每月支出趋势' : '每日支出趋势'}}
+        </view>
+        <view class="card">
+          <!-- 周视图：7 柱图 -->
+          <view class="bar-chart" wx:if="{{periodType === 'week'}}">
+            <view class="bar-col" wx:for="{{dailyTotals}}" wx:key="date">
+              <view class="bar-col-fill bar-color-0" style="height: {{item.barPercent}}%"></view>
+              <text class="bar-col-value">¥{{item.expense / 100}}</text>
+              <text class="bar-col-label">{{item.label}}</text>
+            </view>
+          </view>
+
+          <!-- 月视图：水平条列表 -->
+          <scroll-view scroll-y class="daily-list month" wx:if="{{periodType === 'month'}}">
+            <view class="daily-row" wx:for="{{dailyTotals}}" wx:key="date">
+              <text class="daily-date">{{item.label}}</text>
+              <view class="bar-track daily-bar-track">
+                <view class="bar-fill bar-color-0" style="width: {{item.barPercent}}%"></view>
+              </view>
+              <text class="daily-amount">¥{{item.expense / 100}}</text>
+            </view>
+          </scroll-view>
+
+          <!-- 年视图：12 柱图 -->
+          <view class="bar-chart" wx:if="{{periodType === 'year'}}">
+            <view class="bar-col" wx:for="{{dailyTotals}}" wx:key="label">
+              <view class="bar-col-fill bar-color-0" style="height: {{item.barPercent}}%"></view>
+              <text class="bar-col-value">¥{{item.expense / 100}}</text>
+              <text class="bar-col-label">{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 收入分类分布 -->
+      <view class="section" wx:if="{{incomeCategories.length > 0}}">
+        <view class="section-title">收入分类分布</view>
+        <view class="card">
+          <view class="category-row" wx:for="{{incomeCategories}}" wx:key="name">
+            <text class="category-icon">{{item.icon}}</text>
+            <text class="category-name">{{item.name}}</text>
+            <view class="bar-track">
+              <view class="bar-fill bar-color-{{item.colorIndex}}" style="width: {{item.percent}}%"></view>
+            </view>
+            <view class="category-right">
+              <text class="category-amount">¥{{item.total / 100}}</text>
+              <text class="category-percent">{{item.percent}}%</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section" wx:elif="{{totalIncome > 0 && incomeCategories.length === 0}}">
+        <view class="section-title">收入分类分布</view>
+        <view class="card empty-section">暂无收入分类数据</view>
+      </view>
+
+      <!-- 达到上限提示 -->
+      <view class="limit-note" wx:if="{{reachedLimit}}">仅显示最近 100 条记录</view>
+    </block>
+  </block>
+
+</view>
+
+<!-- 底部导航栏 -->
+<view class="bottom-nav">
+  <view class="nav-item" bindtap="onNavTap" data-page="index">
+    <text class="nav-icon">📋</text>
+    <text class="nav-text">账单</text>
+  </view>
+  <view class="nav-item active">
+    <text class="nav-icon">📊</text>
+    <text class="nav-text">统计</text>
+  </view>
+  <view class="nav-item" bindtap="onNavTap" data-page="add-record">
+    <text class="nav-icon">✏️</text>
+    <text class="nav-text">记一笔</text>
+  </view>
+  <view class="nav-item" bindtap="onNavTap" data-page="category-manage">
+    <text class="nav-icon">📂</text>
+    <text class="nav-text">分类</text>
+  </view>
+</view>
