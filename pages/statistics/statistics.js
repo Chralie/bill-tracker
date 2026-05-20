@@ -265,7 +265,7 @@ Page({
           const dayData = dailyMap[dateStr] || { expense: 0, income: 0 };
           dailyTotals.push({
             date: dateStr,
-            label: periodType === 'week' ? util.getDayLabel(dateStr) : String(d.getDate()),
+            label: periodType === 'week' ? util.getDayLabel(dateStr) : d.getDate() + '日',
             expense: dayData.expense,
             income: dayData.income,
             barPercent: Math.round((dayData.expense / maxExpense) * 100),
