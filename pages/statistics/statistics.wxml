@@ -75,31 +75,8 @@
         </view>
       </view>
 
-      <!-- 支出分类分布 -->
-      <view class="section" wx:if="{{expenseCategories.length > 0}}">
-        <view class="section-title">支出分类分布</view>
-        <view class="card">
-          <view class="category-row" wx:for="{{expenseCategories}}" wx:key="name">
-            <text class="category-icon">{{item.icon}}</text>
-            <text class="category-name">{{item.name}}</text>
-            <view class="bar-track">
-              <view class="bar-fill bar-color-{{item.colorIndex}}" style="width: {{item.percent}}%"></view>
-            </view>
-            <view class="category-right">
-              <text class="category-amount">¥{{item.total / 100}}</text>
-              <text class="category-percent">{{item.percent}}%</text>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <view class="section" wx:elif="{{totalExpense > 0 && expenseCategories.length === 0}}">
-        <view class="section-title">支出分类分布</view>
-        <view class="card empty-section">暂无支出分类数据</view>
-      </view>
-
-      <!-- 周/月：环形分类占比图 -->
-      <view class="section" wx:if="{{periodType !== 'year'}}">
+      <!-- 环形分类占比图 -->
+      <view class="section">
         <view class="section-title">支出分类占比</view>
         <view class="card">
           <view class="ring-wrapper" wx:if="{{!ringEmpty}}">
