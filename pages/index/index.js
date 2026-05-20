@@ -9,6 +9,7 @@ Page({
     totalIncome: 0,     // 本月总收入（分）
     recordList: [],     // 账单列表
     loading: false,
+    loadingMore: false, // 加载更多中
     hasMore: true,      // 是否还有更多数据
     swipedId: '',       // 当前左滑打开的记录 _id
   },
@@ -29,47 +30,53 @@ Page({
   },
 
   onReachBottom() {
-    if (this.data.hasMore && !this.data.loading) {
+    if (this.data.hasMore && !this.data.loading && !this.data.loadingMore) {
       this.loadMoreRecords();
     }
   },
 
-  // 加载本月账单记录
+  // 加载本月账单记录（统计 + 首页列表）
   async loadRecords() {
     this.setData({ loading: true });
+    this._skip = 0;
 
     try {
       const month = this.data.currentMonth;
-      const res = await db.collection('billing_records')
-        .where({
-          record_date: db.RegExp({
-            regexp: `^${month}`,
-            options: 'i',
-          }),
-        })
-        .orderBy('record_date', 'desc')
-        .orderBy('create_time', 'desc')
-        .limit(20)
-        .get();
+      const whereClause = {
+        record_date: db.RegExp({ regexp: `^${month}`, options: 'i' }),
+      };
 
-      const records = res.data.map(r => ({
+      // 并行：全量统计查询 + 首页 20 条列表
+      const [statsRes, listRes] = await Promise.all([
+        db.collection('billing_records').where(whereClause).limit(200).get(),
+        db.collection('billing_records')
+          .where(whereClause)
+          .orderBy('record_date', 'desc')
+          .orderBy('create_time', 'desc')
+          .limit(20)
+          .get(),
+      ]);
+
+      const allRecords = statsRes.data;
+      const totalExpense = allRecords
+        .filter(r => r.type === 'expense')
+        .reduce((sum, r) => sum + r.amount, 0);
+      const totalIncome = allRecords
+        .filter(r => r.type === 'income')
+        .reduce((sum, r) => sum + r.amount, 0);
+
+      const records = listRes.data.map(r => ({
         ...r,
         _translateX: 0,
         _hasTransition: false,
       }));
-      const totalExpense = records
-        .filter(r => r.type === 'expense')
-        .reduce((sum, r) => sum + r.amount, 0);
-      const totalIncome = records
-        .filter(r => r.type === 'income')
-        .reduce((sum, r) => sum + r.amount, 0);
 
       this.setData({
         recordList: records,
         totalExpense,
         totalIncome,
         loading: false,
-        hasMore: records.length >= 20,
+        hasMore: listRes.data.length >= 20,
       });
     } catch (err) {
       console.error('加载账单失败:', err);
@@ -80,7 +87,37 @@ Page({
 
   // 加载更多（滚动到底部）
   async loadMoreRecords() {
-    // TODO: 实现分页加载
+    if (this.data.loadingMore || !this.data.hasMore) return;
+    this.setData({ loadingMore: true });
+
+    try {
+      this._skip += 20;
+      const month = this.data.currentMonth;
+      const res = await db.collection('billing_records')
+        .where({
+          record_date: db.RegExp({ regexp: `^${month}`, options: 'i' }),
+        })
+        .orderBy('record_date', 'desc')
+        .orderBy('create_time', 'desc')
+        .skip(this._skip)
+        .limit(20)
+        .get();
+
+      const newRecords = res.data.map(r => ({
+        ...r,
+        _translateX: 0,
+        _hasTransition: false,
+      }));
+
+      this.setData({
+        recordList: [...this.data.recordList, ...newRecords],
+        loadingMore: false,
+        hasMore: newRecords.length >= 20,
+      });
+    } catch (err) {
+      console.error('加载更多失败:', err);
+      this.setData({ loadingMore: false });
+    }
   },
 
   // 左滑 - 触摸开始

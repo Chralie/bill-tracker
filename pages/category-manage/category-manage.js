@@ -85,18 +85,49 @@ Page({
     }
   },
 
-  // 删除分类
+  // 删除分类（含级联迁移）
   async deleteCategory(e) {
-    const { id, name } = e.currentTarget.dataset;
-
-    const confirm = await wx.showModal({
-      title: '确认删除',
-      content: `确定要删除"${name}"分类吗？`,
-    });
-
-    if (!confirm.confirm) return;
+    const { id, name, type } = e.currentTarget.dataset;
 
     try {
+      // 统计使用该分类的账单数量
+      const countRes = await db.collection('billing_records')
+        .where({ category_id: id })
+        .count();
+      const count = countRes.total;
+
+      // 构建确认弹窗内容
+      const defaultName = type === 'expense' ? '其他支出' : '其他收入';
+      let content = `确定要删除"${name}"分类吗？`;
+      if (count > 0) {
+        content = `"${name}"分类下有 ${count} 条账单，删除后这些账单将移至「${defaultName}」。`;
+      }
+
+      const confirm = await wx.showModal({
+        title: '确认删除',
+        content,
+      });
+      if (!confirm.confirm) return;
+
+      // 如果有账单使用该分类，先迁移到默认"其他"分类
+      if (count > 0) {
+        const defaultCatRes = await db.collection('categories')
+          .where({ name: defaultName, type, is_preset: true })
+          .get();
+        if (defaultCatRes.data.length > 0) {
+          const defaultCat = defaultCatRes.data[0];
+          await db.collection('billing_records')
+            .where({ category_id: id })
+            .update({
+              data: {
+                category_id: defaultCat._id,
+                category_name: defaultCat.name,
+              },
+            });
+        }
+      }
+
+      // 删除分类
       await db.collection('categories').doc(id).remove();
       wx.showToast({ title: '已删除', icon: 'success' });
       this.loadCategories();

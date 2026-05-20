@@ -168,7 +168,7 @@ Page({
     try {
       if (this.data.isEdit) {
         await db.collection('billing_records').doc(this.data.editId).update({
-          data: recordData,
+          data: { ...recordData, update_time: new Date() },
         });
         wx.showToast({ title: '修改成功', icon: 'success' });
       } else {

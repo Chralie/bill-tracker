@@ -1,4 +1,5 @@
 <!-- 统计分析页面 -->
+<wxs module="fmt" src="../../utils/util.wxs" />
 <view class="container">
 
   <!-- 加载状态 -->
@@ -56,21 +57,21 @@
         <view class="summary-row">
           <view class="summary-item">
             <text class="summary-label">支出</text>
-            <text class="summary-value">¥{{totalExpense / 100}}</text>
+            <text class="summary-value">¥{{fmt.formatAmount(totalExpense)}}</text>
           </view>
           <view class="summary-item">
             <text class="summary-label">收入</text>
-            <text class="summary-value">¥{{totalIncome / 100}}</text>
+            <text class="summary-value">¥{{fmt.formatAmount(totalIncome)}}</text>
           </view>
         </view>
         <view class="summary-row summary-row-secondary">
           <view class="summary-item">
             <text class="summary-label">结余</text>
-            <text class="summary-value">¥{{balance / 100}}</text>
+            <text class="summary-value">¥{{fmt.formatAmount(balance)}}</text>
           </view>
           <view class="summary-item">
             <text class="summary-label">日均支出</text>
-            <text class="summary-value">¥{{avgDailyExpense / 100}}</text>
+            <text class="summary-value">¥{{fmt.formatAmount(avgDailyExpense)}}</text>
           </view>
         </view>
       </view>
@@ -83,7 +84,7 @@
             <view class="ring-chart" style="background: {{conicGradient}}"></view>
             <view class="ring-center">
               <text class="ring-total-label">总支出</text>
-              <text class="ring-total-value">¥{{totalExpense / 100}}</text>
+              <text class="ring-total-value">¥{{fmt.formatAmount(totalExpense)}}</text>
             </view>
           </view>
           <view class="ring-empty" wx:else>
@@ -93,7 +94,7 @@
             <view class="legend-item" wx:for="{{expenseCategories}}" wx:key="name">
               <view class="legend-dot bar-color-{{item.colorIndex}}"></view>
               <text class="legend-name">{{item.name}}</text>
-              <text class="legend-amount">¥{{item.total / 100}}</text>
+              <text class="legend-amount">¥{{fmt.formatAmount(item.total)}}</text>
               <text class="legend-percent">{{item.percent}}%</text>
             </view>
           </view>
@@ -108,7 +109,7 @@
             <view class="bar-chart bar-chart-year">
               <view class="bar-col" wx:for="{{dailyTotals}}" wx:key="label">
                 <view class="bar-col-fill bar-color-0" style="height: {{item.barPercent}}%"></view>
-                <text class="bar-col-value">¥{{item.expense / 100}}</text>
+                <text class="bar-col-value">¥{{fmt.formatAmount(item.expense)}}</text>
                 <text class="bar-col-label">{{item.label}}</text>
               </view>
             </view>
@@ -127,7 +128,7 @@
               <view class="bar-fill bar-color-{{item.colorIndex}}" style="width: {{item.percent}}%"></view>
             </view>
             <view class="category-right">
-              <text class="category-amount">¥{{item.total / 100}}</text>
+              <text class="category-amount">¥{{fmt.formatAmount(item.total)}}</text>
               <text class="category-percent">{{item.percent}}%</text>
             </view>
           </view>

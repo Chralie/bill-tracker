@@ -9,7 +9,7 @@ App({
     }
 
     wx.cloud.init({
-      env: 'your-env-id', // TODO: 替换为你的云开发环境 ID
+      env: 'cloud1-d8g70n43wee037822', // TODO: 替换为你的云开发环境 ID
       traceUser: true,
     });
   },

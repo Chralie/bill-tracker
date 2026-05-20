@@ -22,6 +22,7 @@
           class="delete-btn text-danger"
           data-id="{{item._id}}"
           data-name="{{item.name}}"
+          data-type="{{item.type}}"
           bindtap="deleteCategory"
         >删除</text>
         <text wx:else class="text-muted" style="font-size: 22rpx;">预设</text>
@@ -50,6 +51,7 @@
           class="delete-btn text-danger"
           data-id="{{item._id}}"
           data-name="{{item.name}}"
+          data-type="{{item.type}}"
           bindtap="deleteCategory"
         >删除</text>
         <text wx:else class="text-muted" style="font-size: 22rpx;">预设</text>

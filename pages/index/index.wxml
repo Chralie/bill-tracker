@@ -1,4 +1,5 @@
 <!-- pages/index/index.wxml - 首页 -->
+<wxs module="fmt" src="../../utils/util.wxs" />
 <view class="container">
 
   <!-- 月度统计卡片 -->
@@ -11,15 +12,15 @@
     <view class="stats-body flex-between">
       <view class="stats-item">
         <text class="stats-label">支出</text>
-        <text class="stats-amount text-danger">-¥{{totalExpense / 100}}</text>
+        <text class="stats-amount text-danger">-¥{{fmt.formatAmount(totalExpense)}}</text>
       </view>
       <view class="stats-item">
         <text class="stats-label">收入</text>
-        <text class="stats-amount text-primary">+¥{{totalIncome / 100}}</text>
+        <text class="stats-amount text-primary">+¥{{fmt.formatAmount(totalIncome)}}</text>
       </view>
       <view class="stats-item">
         <text class="stats-label">结余</text>
-        <text class="stats-amount">¥{{(totalIncome - totalExpense) / 100}}</text>
+        <text class="stats-amount">¥{{fmt.formatAmount(totalIncome - totalExpense)}}</text>
       </view>
     </view>
   </view>
@@ -62,7 +63,7 @@
         </view>
         <view class="record-right">
           <text class="record-amount {{item.type === 'expense' ? 'text-danger' : 'text-primary'}}">
-            {{item.type === 'expense' ? '-' : '+'}}¥{{item.amount / 100}}
+            {{item.type === 'expense' ? '-' : '+'}}¥{{fmt.formatAmount(item.amount)}}
           </text>
           <text class="record-date text-muted">{{item.record_date}}</text>
         </view>
@@ -76,8 +77,11 @@
   </view>
 
   <!-- 加载更多 -->
-  <view wx:if="{{loading}}" class="loading-tip text-center text-muted">
+  <view wx:if="{{loadingMore}}" class="loading-tip text-center text-muted">
     加载中...
+  </view>
+  <view wx:elif="{{!hasMore && recordList.length > 0}}" class="loading-tip text-center text-muted">
+    没有更多了
   </view>
 
   <!-- 底部导航 -->

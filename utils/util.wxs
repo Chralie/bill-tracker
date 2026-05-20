@@ -1,0 +1,12 @@
+/**
+ * 金额：分 → 元（保留两位小数）
+ * @param {number} cents - 金额（分）
+ * @returns {string} 格式化的金额（元）
+ */
+function formatAmount(cents) {
+  return (cents / 100).toFixed(2);
+}
+
+module.exports = {
+  formatAmount: formatAmount
+};
