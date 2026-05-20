@@ -98,34 +98,36 @@
         <view class="card empty-section">暂无支出分类数据</view>
       </view>
 
-      <!-- 每日/每月支出趋势 -->
-      <view class="section">
-        <view class="section-title">
-          {{periodType === 'year' ? '每月支出趋势' : '每日支出趋势'}}
-        </view>
+      <!-- 周/月：环形分类占比图 -->
+      <view class="section" wx:if="{{periodType !== 'year'}}">
+        <view class="section-title">支出分类占比</view>
         <view class="card">
-          <!-- 周视图：7 柱图 -->
-          <view class="bar-chart" wx:if="{{periodType === 'week'}}">
-            <view class="bar-col" wx:for="{{dailyTotals}}" wx:key="date">
-              <view class="bar-col-fill bar-color-0" style="height: {{item.barPercent}}%"></view>
-              <text class="bar-col-value">¥{{item.expense / 100}}</text>
-              <text class="bar-col-label">{{item.label}}</text>
+          <view class="ring-wrapper" wx:if="{{!ringEmpty}}">
+            <view class="ring-chart" style="background: {{conicGradient}}"></view>
+            <view class="ring-center">
+              <text class="ring-total-label">总支出</text>
+              <text class="ring-total-value">¥{{totalExpense / 100}}</text>
             </view>
           </view>
-
-          <!-- 月视图：水平条列表 -->
-          <scroll-view scroll-y class="daily-list month" wx:if="{{periodType === 'month'}}">
-            <view class="daily-row" wx:for="{{dailyTotals}}" wx:key="date">
-              <text class="daily-date">{{item.label}}</text>
-              <view class="bar-track daily-bar-track">
-                <view class="bar-fill bar-color-0" style="width: {{item.barPercent}}%"></view>
-              </view>
-              <text class="daily-amount">¥{{item.expense / 100}}</text>
+          <view class="ring-empty" wx:else>
+            <text class="ring-empty-text">暂无支出</text>
+          </view>
+          <view class="ring-legend" wx:if="{{!ringEmpty}}">
+            <view class="legend-item" wx:for="{{expenseCategories}}" wx:key="name">
+              <view class="legend-dot bar-color-{{item.colorIndex}}"></view>
+              <text class="legend-name">{{item.name}}</text>
+              <text class="legend-amount">¥{{item.total / 100}}</text>
+              <text class="legend-percent">{{item.percent}}%</text>
             </view>
-          </scroll-view>
+          </view>
+        </view>
+      </view>
 
-          <!-- 年视图：12 柱图 -->
-          <view class="bar-chart" wx:if="{{periodType === 'year'}}">
+      <!-- 年视图：12 月柱图 -->
+      <view class="section" wx:if="{{periodType === 'year'}}">
+        <view class="section-title">每月支出趋势</view>
+        <view class="card">
+          <view class="bar-chart">
             <view class="bar-col" wx:for="{{dailyTotals}}" wx:key="label">
               <view class="bar-col-fill bar-color-0" style="height: {{item.barPercent}}%"></view>
               <text class="bar-col-value">¥{{item.expense / 100}}</text>

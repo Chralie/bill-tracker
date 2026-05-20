@@ -1,6 +1,7 @@
 const util = require('../../utils/util.js');
 
 const COLOR_COUNT = 8;
+const COLOR_PALETTE = ['#07c160', '#ffa940', '#597ef7', '#e74c3c', '#36cfc9', '#9254de', '#f759ab', '#ffc53d'];
 
 // 缓存分类图标，避免每次都查数据库
 let categoryIconMap = {};
@@ -26,6 +27,8 @@ Page({
     expenseCategories: [],
     incomeCategories: [],
     dailyTotals: [],
+    conicGradient: '',
+    ringEmpty: true,
 
     loading: true,
     error: false,
@@ -221,6 +224,23 @@ Page({
         }))
         .sort(sortByTotal);
 
+      // 生成环形图 conic-gradient
+      let conicGradient = 'conic-gradient(#e5e5e5 0% 100%)';
+      const ringEmpty = expenseCategories.length === 0;
+      if (!ringEmpty) {
+        let cumulative = 0;
+        const segments = expenseCategories.map(c => {
+          const start = cumulative;
+          cumulative += c.percent;
+          const color = COLOR_PALETTE[c.colorIndex];
+          return `${color} ${start}% ${cumulative}%`;
+        });
+        if (cumulative < 100) {
+          segments.push(`${COLOR_PALETTE[expenseCategories.length % COLOR_COUNT]} ${cumulative}% 100%`);
+        }
+        conicGradient = `conic-gradient(${segments.join(', ')})`;
+      }
+
       const incomeCategories = Object.values(incomeMap)
         .map((c, i) => ({
           ...c,
@@ -291,6 +311,8 @@ Page({
         expenseCategories,
         incomeCategories,
         dailyTotals,
+        conicGradient,
+        ringEmpty,
         loading: false,
         error: false,
       });
