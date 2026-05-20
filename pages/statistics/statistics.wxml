@@ -158,8 +158,4 @@
     <text class="nav-icon">✏️</text>
     <text class="nav-text">记一笔</text>
   </view>
-  <view class="nav-item" bindtap="onNavTap" data-page="category-manage">
-    <text class="nav-icon">📂</text>
-    <text class="nav-text">分类</text>
-  </view>
 </view>

@@ -106,10 +106,4 @@ Page({
     }
   },
 
-  // 底部导航
-  onNavTap(e) {
-    const page = e.currentTarget.dataset.page;
-    if (page === 'category-manage') return;
-    wx.redirectTo({ url: `/pages/${page}/${page}` });
-  },
 });

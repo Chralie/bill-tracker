@@ -1,6 +1,15 @@
 <!-- pages/add-record/add-record.wxml - 记一笔 -->
 <view class="container">
 
+  <!-- 顶部操作栏 -->
+  <view class="header-row">
+    <view></view>
+    <view class="category-entry" bindtap="onGoCategories">
+      <text class="category-entry-icon">📂</text>
+      <text class="category-entry-text">分类</text>
+    </view>
+  </view>
+
   <!-- 收支类型切换 -->
   <view class="type-switch card flex">
     <view
@@ -85,10 +94,6 @@
     <view class="nav-item active" bindtap="onNavTap" data-page="add-record">
       <text class="nav-icon">✏️</text>
       <text class="nav-text">记一笔</text>
-    </view>
-    <view class="nav-item" bindtap="onNavTap" data-page="category-manage">
-      <text class="nav-icon">📂</text>
-      <text class="nav-text">分类</text>
     </view>
   </view>
 

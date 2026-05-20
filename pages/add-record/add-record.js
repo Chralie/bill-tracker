@@ -194,6 +194,11 @@ Page({
     return this.data.categories.filter(cat => cat.type === this.data.type);
   },
 
+  // 前往分类管理
+  onGoCategories() {
+    wx.navigateTo({ url: '/pages/category-manage/category-manage' });
+  },
+
   // 底部导航
   onNavTap(e) {
     const page = e.currentTarget.dataset.page;
